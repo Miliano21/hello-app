@@ -1,0 +1,19 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-image', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-image']
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'set'
+      - 'image'
+      - 'deployment/hello-deployment'
+      - 'hello-container=us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-image'
+    env:
+      - 'CLOUDSDK_COMPUTE_REGION=us-central1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
+
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/hello-repo/hello-image'
